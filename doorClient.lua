@@ -1,7 +1,9 @@
-doorID = os.getComputerID()
+os.loadAPI("api/sovietProtocol")
 
-local modem = peripheral.wrap("top")
-modem.open(doorID)
+doorID = os.getComputerID()
+local PROTOCOL_CHANNEL = 1
+sovietProtocol.setDebugLevel(9)
+local krb = sovietProtocol.Protocol:new("kerberos", PROTOCOL_CHANNEL, doorID)
 
 local function openDoor()
 	redstone.setOutput("bottom", true)
@@ -13,11 +15,10 @@ end
 
 function openCheck(id)
 	print("sending check")
-	modem.transmit(1, doorID, "can_open "..doorID.." "..id)
+	krb:send("can_open", doorID, id)
 	print("waiting for response")
-	local event, modemSide, senderChannel, replyChannel,
-		message, senderDistance = os.pullEvent("modem_message")
-	if message == "door_open "..doorID.." true" then
+	local sender, response = krb:listen()
+	if response.method == "door_open" and response.body == "true" then
 		return true
 	else
 		return false
