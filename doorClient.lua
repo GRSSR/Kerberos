@@ -3,7 +3,7 @@ os.loadAPI("api/sovietProtocol")
 doorID = os.getComputerID()
 local PROTOCOL_CHANNEL = 1
 sovietProtocol.setDebugLevel(9)
-local krb = sovietProtocol.Protocol:new("kerberos", PROTOCOL_CHANNEL, doorID)
+local laika = sovietProtocol.Protocol:new("laika", PROTOCOL_CHANNEL, doorID)
 
 local function openDoor()
 	redstone.setOutput("bottom", true)
@@ -15,9 +15,9 @@ end
 
 function openCheck(id)
 	print("sending check")
-	krb:send("can_open", doorID, id)
+	laika:send("can_open", doorID, id)
 	print("waiting for response")
-	local sender, response = krb:listen()
+	local sender, response = laika:listen()
 	if response.method == "door_open" and response.body == "true" then
 		return true
 	else

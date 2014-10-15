@@ -1,4 +1,4 @@
-krb-client doorClient /kerberos/krb-client
+laika-client doorClient /laika/laika-client
 
 api:redSting
 api:sovietProtocl
