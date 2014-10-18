@@ -1,4 +1,5 @@
-laika-client doorClient /laika/laika-client
+laika-client doorClient.lua /laika/laika-client
 
-api:redSting
-api:sovietProtocl
+api:redString
+api:sovietProtocol
+api:arg
