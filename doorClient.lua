@@ -21,8 +21,15 @@ function getConfig(file)
 	if f then
 		for line in f:lines() do
 			split = redString.split(line)
+			local stickiness = false
+
+			if split[3] == "sticky" then
+				stickiness = true
+			end
+
 			CONFIG.doors[split[1]] = {
-				side = split[2]}
+				side = split[2],
+				sticky = stickiness}
 			if DEBUG_LEVEL > 3 then
 				print("Loaded door with id "..split[1].." which outputs on side "..split[2])
 			end
@@ -37,7 +44,8 @@ end
 if not getConfig("laika.conf") then
 	print("No config detected, loading simple config.")
 	CONFIG.doors[os.getComputerID()] = {
-		side = "all"
+		side = "all",
+		sticky = false
 	}
 end
 
@@ -86,31 +94,42 @@ function openCheck(id, door)
 	end
 end
 local id = ""
+
 while true do
 	id = ""
 	local event, drive = os.pullEvent("disk")
-	diskRoot = disk.getMountPath(drive)
-	idFile = fs.combine(diskRoot, "ID")
+	if disk.hasData(drive) then
+		diskRoot = disk.getMountPath(drive)
+		idFile = fs.combine(diskRoot, "ID")
 
-	if fs.exists(idFile) then 
-		f = io.open(idFile, "r")
-		for line in f:lines() do
-			id = id..line
+		if fs.exists(idFile) then 
+			f = io.open(idFile, "r")
+			for line in f:lines() do
+				id = id..line
+			end
+			f:close()
+		else
+			print("invalid disk")
 		end
-		f:close()
 	else
 		print("invalid disk")
 	end
 
-	disk.eject(drive)
-
 	for doorID, door in pairs(CONFIG.doors) do
 		if openCheck(id, doorID) then
 				openDoor(door.side)
-				sleep(5)
+				if door.sticky then
+					print("Waiting for ID removal")
+					local event, drive = os.pullEvent("disk_eject")
+					print("ID removed, closing")
+				else
+					disk.eject(drive)
+					sleep(5)
+				end
 				closeDoor(door.side)
 		else
 			print("invalid ID for door "..doorID)
 		end
 	end
+	disk.eject(drive)
 end
