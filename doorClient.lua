@@ -1,5 +1,5 @@
-os.loadAPI("api/sovietProtocol")
-os.loadAPI("api/arg")
+os.loadAPI("/.sys/soviet_protocol")
+os.loadAPI("/.sys/args")
 local args = arg.parseArgs({...})
 
 local PROTOCOL_CHANNEL = 1

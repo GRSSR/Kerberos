@@ -1,5 +1,16 @@
-laika-client doorClient.lua /laika/laika-client
-
-api:redString
-api:sovietProtocol
-api:arg
+{
+	dependancies = {
+		"api",
+	},
+	files = {
+		{
+			install_location = "/laika/laika_client",
+			repo_location = "doorClient.lua"
+		},
+		{
+			install_location = "/laika/laika_simple",
+			repo_location = "laika_simple.lua"
+		},
+	},
+	version = "1.0.0"
+}
